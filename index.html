@@ -1,0 +1,39 @@
+<html>
+    <head>
+        <script>
+            let videosPlayed = 0
+            const FRAME_RATE = 60
+            const VIDEOS = ["Shot02_01.mp4", "Shot02_02.mp4", "Shot_02_Final.mp4"]
+
+            function playVideo()
+            {
+                let canvas = document.querySelector("canvas")
+                canvas.width = window.innerWidth - 20
+                canvas.height = window.innerHeight - 20
+                let video = document.createElement("video")
+                video.muted = true
+                video.autoplay = true
+                setTimeout(()=>drawVideo(canvas, video), 1000/FRAME_RATE)
+            }
+
+            function drawVideo(canvas, video)
+            {
+                if (((videosPlayed == 0) || video.ended) && ((videosPlayed + 1) <= VIDEOS.length))
+                {
+                    video.src = VIDEOS[videosPlayed]
+                    video.play()
+                    videosPlayed++
+                    setTimeout(()=>drawVideo(canvas, video), 1000/FRAME_RATE)
+                }
+                else if (!video.ended)
+                {
+                    canvas.getContext("2d").drawImage(video, 0, 0, canvas.width, canvas.height)
+                    setTimeout(()=>drawVideo(canvas, video), 1000/FRAME_RATE)
+                }
+            }
+        </script>
+    </head>
+    <body style="background-color:black;" onload="playVideo()">
+        <canvas></canvas>
+    </body>
+</html>
