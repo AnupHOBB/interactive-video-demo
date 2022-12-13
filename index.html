@@ -1,9 +1,14 @@
 <html>
     <head>
         <script>
-            let videosPlayed = 0
             const FRAME_RATE = 60
             const VIDEOS = ["Shot02_01.mp4", "Shot02_02.mp4", "Shot_02_Final.mp4"]
+
+            let videosPlayed = 0
+            let clickCounter = 0
+            let currentTime = 0
+            let hasChanged = false
+            let firstTime = true
 
             function playVideo()
             {
@@ -13,27 +18,56 @@
                 let video = document.createElement("video")
                 video.muted = true
                 video.autoplay = true
-                setTimeout(()=>drawVideo(canvas, video), 1000/FRAME_RATE)
+                setTimeout(()=>loadVideo(canvas, video), 1000/FRAME_RATE)
             }
 
-            function drawVideo(canvas, video)
+            function onCanvasClick()
+            {
+                clickCounter = (clickCounter < (VIDEOS.length-1)) ? clickCounter+1 : 0
+                hasChanged = true
+            }
+
+            function loadVideo(canvas, video)
+            {
+                if (firstTime)
+                {
+                    video.src = VIDEOS[clickCounter]
+                    video.play()
+                    firstTime = false
+                }
+                if (hasChanged)
+                {
+                    video.src = VIDEOS[clickCounter]
+                    video.play()
+                    video.currentTime = currentTime
+                    hasChanged = false
+                }
+                if (!video.ended)
+                {
+                    currentTime = video.currentTime
+                    canvas.getContext("2d").drawImage(video, 0, 0, canvas.width, canvas.height)
+                    setTimeout(()=>loadVideo(canvas, video), 1000/FRAME_RATE)
+                }
+            }
+
+            function loadAllSequentially(canvas, video)
             {
                 if (((videosPlayed == 0) || video.ended) && ((videosPlayed + 1) <= VIDEOS.length))
                 {
                     video.src = VIDEOS[videosPlayed]
                     video.play()
                     videosPlayed++
-                    setTimeout(()=>drawVideo(canvas, video), 1000/FRAME_RATE)
+                    setTimeout(()=>loadAllSequentially(canvas, video), 1000/FRAME_RATE)
                 }
                 else if (!video.ended)
                 {
                     canvas.getContext("2d").drawImage(video, 0, 0, canvas.width, canvas.height)
-                    setTimeout(()=>drawVideo(canvas, video), 1000/FRAME_RATE)
+                    setTimeout(()=>loadAllSequentially(canvas, video), 1000/FRAME_RATE)
                 }
             }
         </script>
     </head>
     <body style="background-color:black;" onload="playVideo()">
-        <canvas></canvas>
+        <canvas onclick="onCanvasClick()"></canvas>
     </body>
 </html>
