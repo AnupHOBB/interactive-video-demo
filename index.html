@@ -2,13 +2,13 @@
     <head>
         <script>
             const FRAME_RATE = 60
-            const VIDEOS = ["Shot02_01.mp4", "Shot02_02.mp4", "Shot_02_Final.mp4"]
-
-            let videosPlayed = 0
-            let clickCounter = 0
-            let currentTime = 0
+            const VIDEOS = ["Shot02_01.mp4", "Shot02_02.mp4"]
             let hasChanged = false
             let firstTime = true
+            let clickCounter = 0
+            let currentTime = 0
+            let videosPlayed = 0
+            
 
             function playVideo()
             {
@@ -29,18 +29,14 @@
 
             function loadVideo(canvas, video)
             {
-                if (firstTime)
-                {
-                    video.src = VIDEOS[clickCounter]
-                    video.play()
-                    firstTime = false
-                }
-                if (hasChanged)
+                if (firstTime || hasChanged)
                 {
                     video.src = VIDEOS[clickCounter]
                     video.play()
                     video.currentTime = currentTime
                     hasChanged = false
+                    if (firstTime) 
+                        firstTime = false
                 }
                 if (!video.ended)
                 {
